@@ -1,120 +1,51 @@
 package com.example.dsy1105_006d_lc7.view
 
-import android.net.Uri
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Fastfood
-import androidx.compose.material.icons.filled.Grass
-import androidx.compose.material.icons.filled.LocalFireDepartment
-import androidx.compose.material.icons.filled.LunchDining
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Inventory2
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun DrawerMenu(
-    username:String,
+    username: String,
     navController: NavController
-)
-{//Inicio Drawer
-Column(modifier= Modifier.fillMaxSize())
-{//Inicio Columna
-    Box(
-        modifier= Modifier
-            .fillMaxWidth()
-            .height(120.dp)
-            .background(MaterialTheme.colorScheme.primary)
-    )//fin box
-    {//inicio Contenido box
-        Text(
-            text="Categorias  Usuario: $username",
-            style=MaterialTheme.typography.headlineSmall,
-            color= MaterialTheme.colorScheme.onPrimary,
-            modifier= Modifier
-                .align(Alignment.BottomStart)
-        )
-    }//termino inicio Contenido box
+) {
+    Scaffold(
+        topBar = { TopAppBar(title = { Text("Menú principal") }) }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text("Hola, $username", style = MaterialTheme.typography.headlineSmall)
 
-    //LazyColumn Crea una lista de elemntos que se desplazan verticalmente
-
-
-    LazyColumn(modifier= Modifier.weight(1f))
-    {//inicio Lazy
-        item{
             NavigationDrawerItem(
-                label={Text("Hamburguesa BBQ")},
+                label = { Text("Productos") },
                 selected = false,
-                onClick = {/* accion */},
-                icon={ Icon(Icons.Default.LunchDining,
-                    contentDescription = "BBQ") }
+                onClick = { navController.navigate("lista_productos") },
+                icon = { Icon(Icons.Default.Inventory2, contentDescription = "Productos") }
             )
-        }//item1
 
-        item{
             NavigationDrawerItem(
-                label={Text("Hamburguesa Veggie")},
+                label = { Text("Cerrar sesión") },
                 selected = false,
-                onClick = {/* accion */},
-                icon={ Icon(Icons.Default.Grass,
-                    contentDescription = "Veggie") }
-            )
-        }//item2
-
-        item{
-            NavigationDrawerItem(
-                label={Text("Hamburguesa Picante")},
-                selected = false,
-                onClick = {/* accion */},
-                icon={ Icon(Icons.Default.LocalFireDepartment,
-                    contentDescription = "Picante") }
-            )
-        }//item3
-
-        item{
-            NavigationDrawerItem(
-                label={Text("Hamburguesa Clasica")},
-                selected = false,
-                onClick = {/* accion */
-                val nombre= Uri.encode("Hamburguesa Clasica")
-                val precio="5000"
-                    navController.navigate("ProductoFormScreen/$nombre/$precio")
-
+                onClick = {
+                    navController.navigate("login") {
+                        popUpTo("login") { inclusive = true }
+                    }
                 },
-                icon={ Icon(Icons.Default.Fastfood,
-                    contentDescription = "Clasica") }
+                icon = { Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Salir") }
             )
-        }//item4
-
-
-
-    } //termino inicio Lazy
-
-
-}//Termino //Inicio Columna
-
-}//Termino Drawer
-
-
-@Preview(showBackground = true)
-@Composable
-
-fun DrawerMenuPreview(){
-    val navController= rememberNavController()
-    DrawerMenu(username="Usuario Test", navController=navController)
+        }
+    }
 }
 
