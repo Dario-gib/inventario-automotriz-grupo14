@@ -7,11 +7,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.dsy1105_006d_lc7.ui.login.HomeScreen
+import com.example.dsy1105_006d_lc7.ui.login.LoginScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ListaProductosScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoFormScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoViewModel
-import com.example.dsy1105_006d_lc7.view.DrawerMenu
+import com.example.dsy1105_006d_lc7.ui.menu.MenuScreen
 
 @Composable
 fun AppNavigation() {
@@ -22,7 +22,7 @@ fun AppNavigation() {
     NavHost(navController = navController, startDestination = "login") {
 
         composable("login") {
-            HomeScreen(navController = navController)
+            LoginScreen(navController = navController)
         }
 
         composable(
@@ -30,7 +30,7 @@ fun AppNavigation() {
             arguments = listOf(navArgument("username") { type = NavType.StringType })
         ) { backStackEntry ->
             val username = backStackEntry.arguments?.getString("username").orEmpty()
-            DrawerMenu(username = username, navController = navController)
+            MenuScreen(username = username, navController = navController)
         }
 
         composable("lista_productos") {

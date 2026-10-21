@@ -6,7 +6,6 @@ package com.example.dsy1105_006d_lc7.ui.login
 
 
 
-import android.R.attr.enabled
 import androidx.compose.foundation.Image
 
 import androidx.compose.foundation.background
@@ -28,8 +27,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 
 import androidx.compose.material3.Button
-
-import androidx.compose.material3.ColorScheme
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 
@@ -84,7 +81,7 @@ import androidx.compose.runtime.collectAsState
 
 
 
-fun HomeScreen(
+fun LoginScreen(
     navController: NavController,
     vm: LoginViewModel = viewModel() // Conectamos la arquitectura
 ){
@@ -377,13 +374,13 @@ Text(if(state.isLoading) "Validando" else "Inicio sesision"
 
 
 
-fun HomeScreenPreview(){
+fun LoginScreenPreview(){
 
 // creamos un NavController
     val navController= rememberNavController()
 // simular viewmodel
 val vm= LoginViewModel()
-    HomeScreen(navController=navController, vm=vm)
+    LoginScreen(navController=navController, vm=vm)
 
 
 

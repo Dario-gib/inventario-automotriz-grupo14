@@ -1,4 +1,4 @@
-package com.example.dsy1105_006d_lc7.view
+package com.example.dsy1105_006d_lc7.ui.menu
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -12,7 +12,7 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DrawerMenu(
+fun MenuScreen(
     username: String,
     navController: NavController
 ) {

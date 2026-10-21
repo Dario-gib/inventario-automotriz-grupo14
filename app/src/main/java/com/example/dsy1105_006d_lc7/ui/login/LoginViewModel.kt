@@ -1,7 +1,7 @@
 package com.example.dsy1105_006d_lc7.ui.login
 
 import androidx.lifecycle.ViewModel
-import com.example.dsy1105_006d_lc7.data.model.AuthRepository
+import com.example.dsy1105_006d_lc7.data.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
