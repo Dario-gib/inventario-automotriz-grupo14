@@ -74,6 +74,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
+import androidx.compose.runtime.collectAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -87,7 +88,7 @@ fun HomeScreen(
     navController: NavController,
     vm: LoginViewModel = viewModel() // Conectamos la arquitectura
 ){
-    val state =vm.uiState
+    val state by vm.uiState.collectAsState()
     var showPass by remember{ mutableStateOf(false) }
 
     // darkColorScheme es una funcion de material3 que define un color oscuro
