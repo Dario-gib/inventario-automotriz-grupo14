@@ -72,6 +72,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 import androidx.compose.runtime.collectAsState
+import com.example.dsy1105_006d_lc7.ui.theme.DSY1105006DLC7Theme
+import com.example.dsy1105_006d_lc7.ui.theme.appTopBarColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -88,25 +90,9 @@ fun LoginScreen(
     val state by vm.uiState.collectAsState()
     var showPass by remember{ mutableStateOf(false) }
 
-    // darkColorScheme es una funcion de material3 que define un color oscuro
-
-    val ColorScheme = darkColorScheme(
-
-        primary= Color(0xFF98222E),
-
-        onPrimary = Color.White,
-
-        onSurface = Color(0xFF333333), //Gris
-
-    ) // fin dark
-
-
-
-
-
     MaterialTheme(
 
-        colorScheme = ColorScheme
+        colorScheme = MaterialTheme.colorScheme
 
     ){ // inicio Aplicar Material
 
@@ -120,21 +106,7 @@ fun LoginScreen(
 
             // Crea Estuctra basica de la pantalla Se define topBar, BottomBar
 
-            topBar = {
 
-                TopAppBar(title = {Text("Inventario Automotriz",
-
-                    color =MaterialTheme.colorScheme.onPrimary,
-
-                    )})
-
-
-
-                // Crea un AppBar con un titulo
-
-
-
-            }// fin topBar
 
         ) // fin Scaff
 
@@ -158,7 +130,7 @@ fun LoginScreen(
 
                     .padding(16.dp)
 
-                    .background(Color(0xFFF0F0F0)), // gris Claro
+                    .background(MaterialTheme.colorScheme.background), // gris Claro
 
                 verticalArrangement = Arrangement.spacedBy(20.dp),
 
@@ -170,29 +142,10 @@ fun LoginScreen(
 
             {// inicio Contenido
 
-                Text(text="Bienvenido !",
-
-                    style= MaterialTheme.typography.headlineMedium,
-
-                    color=MaterialTheme.colorScheme.primary
-
-
-
-
-
-                ) // Muestra un texto simple en la pantalla
-
-
-
-
-
-
-
-
 
                 Image( // insertar una imagen en la interfaz
 
-                    painter= painterResource(id = R.drawable.logoduoc),
+                    painter=   painterResource(id = R.drawable.logo_puenteauto),
 
                     contentDescription = "Logo App",
 
@@ -200,7 +153,7 @@ fun LoginScreen(
 
                         .fillMaxWidth()
 
-                        .height(150.dp),
+                        .height(200.dp),
 
                     contentScale = ContentScale.Fit
 
@@ -225,56 +178,13 @@ fun LoginScreen(
 
 
 
-
-
-
-                Row(
-
-                    modifier = Modifier
-
-                        .fillMaxWidth()
-
-                        .padding(horizontal = 16.dp),
-
-                    horizontalArrangement = Arrangement.SpaceBetween
-
-                )// Fin Row
-
-                {// Aplica row
-
-                    Text("texto uno",
-
-                        style =MaterialTheme.typography.bodyLarge.copy(
-
-                            color=MaterialTheme.colorScheme.onSurface.copy(alpha=0.8f),
-
-                            fontWeight = FontWeight.Bold),
-
-                        modifier = Modifier
-
-                            .padding(end=8.dp)
-
-                    )// fin texto 1
-
-
-
-
-
-                    Text("texto dos",
-
-                        style =MaterialTheme.typography.bodyLarge.copy(
-
-                            color=MaterialTheme.colorScheme.onSurface.copy(alpha=0.8f),
-
-                            fontWeight = FontWeight.Bold),
-
-                        modifier = Modifier
-
-                            .padding(end=8.dp)
-
-                    )// fin texto 1
-
-                } // fin Aplica row
+                Text(
+                    text = "¡Bienvenido a PuenteAuto!",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
 
                 OutlinedTextField(
                     value=state.username,
@@ -338,7 +248,7 @@ if(state.error!=null){
 
                 {// aplicacion de propiedad
                     //Text("Presioname")
-Text(if(state.isLoading) "Validando" else "Inicio sesision"
+Text(if(state.isLoading) "Validando" else "Iniciar Sesion"
 
 )
 
@@ -368,20 +278,15 @@ Text(if(state.isLoading) "Validando" else "Inicio sesision"
 
 
 
-@Preview(showBackground = true) // Genera la vista
-
-@Composable // Genera Interfz Garfica
-
-
-
-fun LoginScreenPreview(){
-
-// creamos un NavController
-    val navController= rememberNavController()
-// simular viewmodel
-val vm= LoginViewModel()
-    LoginScreen(navController=navController, vm=vm)
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    val navController = rememberNavController()
+    val vm = LoginViewModel()
+    DSY1105006DLC7Theme {
+        LoginScreen(navController = navController, vm = vm)
+    }
+}
 
 
-
-}// Fin HomeScreen
+// Fin HomeScreen

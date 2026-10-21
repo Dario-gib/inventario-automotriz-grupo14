@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.dsy1105_006d_lc7.ui.theme.appTopBarColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -17,7 +18,8 @@ fun MenuScreen(
     navController: NavController
 ) {
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Menú principal") }) }
+        topBar = { TopAppBar(title = { Text("Menú principal") },
+            colors = appTopBarColors()) }
     ) { padding ->
         Column(
             modifier = Modifier
