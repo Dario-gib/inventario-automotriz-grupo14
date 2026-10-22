@@ -8,10 +8,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.dsy1105_006d_lc7.ui.login.LoginScreen
+import com.example.dsy1105_006d_lc7.ui.menu.MenuScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ListaProductosScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoFormScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoViewModel
-import com.example.dsy1105_006d_lc7.ui.menu.MenuScreen
+import com.example.dsy1105_006d_lc7.ui.qr.QrScannerScreen
+import com.example.dsy1105_006d_lc7.ui.qr.QrViewModel
 
 @Composable
 fun AppNavigation() {
@@ -44,6 +46,7 @@ fun AppNavigation() {
                     productoViewModel.cargarProducto(id)
                     navController.navigate("producto_form/$id")
                 },
+                onEscanearQr = { navController.navigate("qr_scanner") },
                 onVolver = { navController.popBackStack() }
             )
         }
@@ -55,6 +58,23 @@ fun AppNavigation() {
             ProductoFormScreen(
                 viewModel = productoViewModel,
                 onVolver = { navController.popBackStack() }
+            )
+        }
+
+        composable("qr_scanner") {
+            val qrViewModel: QrViewModel = viewModel()
+            QrScannerScreen(
+                viewModel = qrViewModel,
+                onVolver = { navController.popBackStack() },
+                onEditarProducto = { id ->
+                    productoViewModel.cargarProducto(id)
+                    navController.navigate("producto_form/$id")
+                },
+                onRegistrarProducto = { codigo ->
+                    productoViewModel.nuevoProducto()
+                    productoViewModel.onCodigoChange(codigo)
+                    navController.navigate("producto_form/0")
+                }
             )
         }
     }
