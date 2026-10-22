@@ -29,9 +29,10 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
         _mensaje.value = null
     }
 
-    // ---------- Lista (reactiva con búsqueda y filtro) ----------
+    // ---------- Lista (reactiva con búsqueda y filtros) ----------
     private val _busqueda = MutableStateFlow("")
     private val _soloStockBajo = MutableStateFlow(false)
+    private val _categoria = MutableStateFlow<String?>(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val lista: StateFlow<ListaProductosUiState> = combine(
@@ -41,14 +42,32 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
             else repository.buscar(texto.trim())
         },
         _busqueda,
-        _soloStockBajo
-    ) { todos, resultado, texto, soloBajo ->
+        _soloStockBajo,
+        _categoria
+    ) { todos, resultado, texto, soloBajo, categoria ->
+        val categorias = todos
+            .map { it.categoria.trim() }
+            .distinctBy { it.lowercase() }
+            .sortedBy { it.lowercase() }
+        // Si la categoría elegida ya no existe (por ejemplo, se eliminó), se ignora
+        val categoriaActiva = categoria?.takeIf { sel ->
+            categorias.any { it.equals(sel, ignoreCase = true) }
+        }
+
+        var visibles = resultado
+        if (soloBajo) visibles = visibles.filter { it.stockBajo }
+        if (categoriaActiva != null) {
+            visibles = visibles.filter { it.categoria.equals(categoriaActiva, ignoreCase = true) }
+        }
+
         ListaProductosUiState(
-            productos = if (soloBajo) resultado.filter { it.stockBajo } else resultado,
+            productos = visibles,
             busqueda = texto,
             soloStockBajo = soloBajo,
             total = todos.size,
-            stockBajo = todos.count { it.stockBajo }
+            stockBajo = todos.count { it.stockBajo },
+            categorias = categorias,
+            categoriaSeleccionada = categoriaActiva
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ListaProductosUiState())
 
@@ -58,6 +77,10 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
 
     fun onSoloStockBajoChange(valor: Boolean) {
         _soloStockBajo.value = valor
+    }
+
+    fun onCategoriaSeleccionada(categoria: String?) {
+        _categoria.value = categoria
     }
 
     // ---------- Cambios de campos (limpian su error) ----------

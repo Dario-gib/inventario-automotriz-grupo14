@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.lazy.LazyRow
 import com.example.dsy1105_006d_lc7.data.local.ProductoEntity
 import com.example.dsy1105_006d_lc7.data.local.stockBajo
 import com.example.dsy1105_006d_lc7.ui.theme.appTopBarColors
@@ -120,12 +121,33 @@ fun ListaProductosScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
 
+            if (estado.categorias.isNotEmpty()) {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    item {
+                        FilterChip(
+                            selected = estado.categoriaSeleccionada == null,
+                            onClick = { viewModel.onCategoriaSeleccionada(null) },
+                            label = { Text("Todas") }
+                        )
+                    }
+                    items(estado.categorias) { categoria ->
+                        FilterChip(
+                            selected = estado.categoriaSeleccionada.equals(categoria, ignoreCase = true),
+                            onClick = { viewModel.onCategoriaSeleccionada(categoria) },
+                            label = { Text(categoria) }
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
             if (estado.productos.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
                         when {
                             estado.busqueda.isNotBlank() -> "Sin resultados para la búsqueda"
                             estado.soloStockBajo -> "No hay productos con stock bajo"
+                            estado.categoriaSeleccionada != null -> "No hay productos en esta categoría"
                             else -> "Aún no hay productos.\nPresiona + para agregar uno."
                         }
                     )

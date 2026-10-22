@@ -12,6 +12,7 @@ import com.example.dsy1105_006d_lc7.ui.menu.MenuScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ListaProductosScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoFormScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoViewModel
+import com.example.dsy1105_006d_lc7.ui.qr.QrCapturaScreen
 import com.example.dsy1105_006d_lc7.ui.qr.QrScannerScreen
 import com.example.dsy1105_006d_lc7.ui.qr.QrViewModel
 
@@ -57,6 +58,7 @@ fun AppNavigation() {
         ) {
             ProductoFormScreen(
                 viewModel = productoViewModel,
+                onEscanearCodigo = { navController.navigate("qr_codigo") },
                 onVolver = { navController.popBackStack() }
             )
         }
@@ -77,5 +79,15 @@ fun AppNavigation() {
                 }
             )
         }
-    }
-}
+
+        composable("qr_codigo") {
+            QrCapturaScreen(
+                onCodigoLeido = { codigo ->
+                    productoViewModel.onCodigoChange(codigo)
+                    navController.popBackStack()
+                },
+                onVolver = { navController.popBackStack() }
+            )
+        }
+    } // fin NavHost
+} // fin AppNavigation

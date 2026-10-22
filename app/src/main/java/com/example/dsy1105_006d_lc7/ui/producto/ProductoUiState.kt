@@ -29,5 +29,7 @@ data class ListaProductosUiState(
     val busqueda: String = "",
     val soloStockBajo: Boolean = false,
     val total: Int = 0,
-    val stockBajo: Int = 0
+    val stockBajo: Int = 0,
+    val categorias: List<String> = emptyList(),
+    val categoriaSeleccionada: String? = null
 )

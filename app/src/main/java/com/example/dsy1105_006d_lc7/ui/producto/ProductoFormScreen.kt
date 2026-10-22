@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -17,6 +18,7 @@ import com.example.dsy1105_006d_lc7.ui.theme.appTopBarColors
 @Composable
 fun ProductoFormScreen(
     viewModel: ProductoViewModel,
+    onEscanearCodigo: () -> Unit,
     onVolver: () -> Unit
 ) {
     val state by viewModel.form.collectAsState()
@@ -50,7 +52,20 @@ fun ProductoFormScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            CampoTexto("Código", state.codigo, viewModel::onCodigoChange, state.codigoError)
+            CampoTexto(
+                label = "Código",
+                valor = state.codigo,
+                onChange = viewModel::onCodigoChange,
+                error = state.codigoError,
+                trailingIcon = {
+                    IconButton(onClick = onEscanearCodigo) {
+                        Icon(
+                            Icons.Default.QrCodeScanner,
+                            contentDescription = "Escanear código QR"
+                        )
+                    }
+                }
+            )
             CampoTexto("Nombre", state.nombre, viewModel::onNombreChange, state.nombreError)
             CampoTexto("Categoría", state.categoria, viewModel::onCategoriaChange, state.categoriaError)
             CampoTexto(
@@ -81,7 +96,8 @@ private fun CampoTexto(
     valor: String,
     onChange: (String) -> Unit,
     error: String?,
-    tipoTeclado: KeyboardType = KeyboardType.Text
+    tipoTeclado: KeyboardType = KeyboardType.Text,
+    trailingIcon: (@Composable () -> Unit)? = null
 ) {
     OutlinedTextField(
         value = valor,
@@ -90,6 +106,7 @@ private fun CampoTexto(
         isError = error != null,
         supportingText = { Text(error ?: "") },
         singleLine = true,
+        trailingIcon = trailingIcon,
         keyboardOptions = KeyboardOptions(keyboardType = tipoTeclado),
         modifier = Modifier.fillMaxWidth()
     )
