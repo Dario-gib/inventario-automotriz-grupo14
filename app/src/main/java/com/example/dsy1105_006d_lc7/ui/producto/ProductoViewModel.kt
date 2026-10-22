@@ -5,16 +5,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dsy1105_006d_lc7.data.local.AppDatabase
 import com.example.dsy1105_006d_lc7.data.local.ProductoEntity
+import com.example.dsy1105_006d_lc7.data.local.stockBajo
 import com.example.dsy1105_006d_lc7.data.repository.ProductoRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ProductoViewModel(application: Application) : AndroidViewModel(application) {
@@ -27,32 +21,53 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
     private val _form = MutableStateFlow(ProductoUiState())
     val form: StateFlow<ProductoUiState> = _form.asStateFlow()
 
-    // ---------- Lista (reactiva con búsqueda) ----------
+    // ---------- Mensajes para la lista (guardado, edición) ----------
+    private val _mensaje = MutableStateFlow<String?>(null)
+    val mensaje: StateFlow<String?> = _mensaje.asStateFlow()
+
+    fun mensajeMostrado() {
+        _mensaje.value = null
+    }
+
+    // ---------- Lista (reactiva con búsqueda y filtro) ----------
     private val _busqueda = MutableStateFlow("")
+    private val _soloStockBajo = MutableStateFlow(false)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val lista: StateFlow<ListaProductosUiState> = _busqueda
-        .flatMapLatest { texto ->
+    val lista: StateFlow<ListaProductosUiState> = combine(
+        repository.observarTodos(),
+        _busqueda.flatMapLatest { texto ->
             if (texto.isBlank()) repository.observarTodos()
             else repository.buscar(texto.trim())
-        }
-        .combine(_busqueda) { productos, texto ->
-            ListaProductosUiState(productos = productos, busqueda = texto)
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ListaProductosUiState())
+        },
+        _busqueda,
+        _soloStockBajo
+    ) { todos, resultado, texto, soloBajo ->
+        ListaProductosUiState(
+            productos = if (soloBajo) resultado.filter { it.stockBajo } else resultado,
+            busqueda = texto,
+            soloStockBajo = soloBajo,
+            total = todos.size,
+            stockBajo = todos.count { it.stockBajo }
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ListaProductosUiState())
 
     fun onBusquedaChange(texto: String) {
         _busqueda.value = texto
     }
 
-    //  Cambios de campos (limpian su error)
+    fun onSoloStockBajoChange(valor: Boolean) {
+        _soloStockBajo.value = valor
+    }
+
+    // ---------- Cambios de campos (limpian su error) ----------
     fun onCodigoChange(v: String) = _form.update { it.copy(codigo = v, codigoError = null) }
     fun onNombreChange(v: String) = _form.update { it.copy(nombre = v, nombreError = null) }
     fun onCategoriaChange(v: String) = _form.update { it.copy(categoria = v, categoriaError = null) }
     fun onCantidadChange(v: String) = _form.update { it.copy(cantidad = v, cantidadError = null) }
     fun onStockMinimoChange(v: String) = _form.update { it.copy(stockMinimo = v, stockMinimoError = null) }
 
-    // Preparar el formulario
+    // ---------- Preparar el formulario ----------
     fun nuevoProducto() {
         _form.value = ProductoUiState()
     }
@@ -71,7 +86,7 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    // Validaciones
+    // ---------- Validaciones ----------
     private fun validarNumero(valor: String): String? {
         if (valor.isBlank()) return "Campo obligatorio"
         val numero = valor.trim().toIntOrNull() ?: return "Debe ser un número entero"
@@ -101,7 +116,7 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
         ).all { it == null }
     }
 
-    // Guardar (crear o modificar) -
+    // ---------- Guardar (crear o modificar) ----------
     fun guardar() {
         if (!validar()) return
         val s = _form.value
@@ -128,6 +143,7 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
             )
             if (s.esEdicion) repository.actualizar(entidad) else repository.insertar(entidad)
 
+            _mensaje.value = if (s.esEdicion) "Producto actualizado" else "Producto creado"
             _form.update { it.copy(guardando = false, guardadoExitosamente = true) }
         }
     }
@@ -139,5 +155,10 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
 
     fun eliminar(producto: ProductoEntity) {
         viewModelScope.launch { repository.eliminar(producto) }
+    }
+
+    // Deshacer una eliminación: vuelve a insertar el mismo producto
+    fun restaurar(producto: ProductoEntity) {
+        viewModelScope.launch { repository.insertar(producto) }
     }
 }

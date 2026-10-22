@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
@@ -18,7 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.dsy1105_006d_lc7.data.local.ProductoEntity
+import com.example.dsy1105_006d_lc7.data.local.stockBajo
 import com.example.dsy1105_006d_lc7.ui.theme.appTopBarColors
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +33,19 @@ fun ListaProductosScreen(
     onVolver: () -> Unit
 ) {
     val estado by viewModel.lista.collectAsState()
+    val mensaje by viewModel.mensaje.collectAsState()
     var productoAEliminar by remember { mutableStateOf<ProductoEntity?>(null) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    // Mensaje que llega desde el formulario (producto creado o actualizado)
+    LaunchedEffect(mensaje) {
+        mensaje?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.mensajeMostrado()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -47,9 +62,9 @@ fun ListaProductosScreen(
                     }
                 },
                 colors = appTopBarColors()
-
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(onClick = onAgregar) {
                 Icon(Icons.Default.Add, contentDescription = "Agregar producto")
@@ -62,6 +77,26 @@ fun ListaProductosScreen(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
+            // Resumen del inventario
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ResumenCard(
+                    titulo = "Total",
+                    valor = estado.total,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier.weight(1f)
+                )
+                ResumenCard(
+                    titulo = "Stock bajo",
+                    valor = estado.stockBajo,
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+
             OutlinedTextField(
                 value = estado.busqueda,
                 onValueChange = viewModel::onBusquedaChange,
@@ -70,14 +105,29 @@ fun ListaProductosScreen(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            FilterChip(
+                selected = estado.soloStockBajo,
+                onClick = { viewModel.onSoloStockBajoChange(!estado.soloStockBajo) },
+                label = { Text("Solo stock bajo") },
+                leadingIcon = {
+                    Icon(
+                        if (estado.soloStockBajo) Icons.Default.Check else Icons.Default.Warning,
+                        contentDescription = null
+                    )
+                }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
             if (estado.productos.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
-                        if (estado.busqueda.isBlank())
-                            "Aún no hay productos.\nPresiona + para agregar uno."
-                        else "Sin resultados para la búsqueda"
+                        when {
+                            estado.busqueda.isNotBlank() -> "Sin resultados para la búsqueda"
+                            estado.soloStockBajo -> "No hay productos con stock bajo"
+                            else -> "Aún no hay productos.\nPresiona + para agregar uno."
+                        }
                     )
                 }
             } else {
@@ -106,6 +156,16 @@ fun ListaProductosScreen(
                 TextButton(onClick = {
                     viewModel.eliminar(producto)
                     productoAEliminar = null
+                    scope.launch {
+                        val resultado = snackbarHostState.showSnackbar(
+                            message = "Producto eliminado",
+                            actionLabel = "Deshacer",
+                            duration = SnackbarDuration.Long
+                        )
+                        if (resultado == SnackbarResult.ActionPerformed) {
+                            viewModel.restaurar(producto)
+                        }
+                    }
                 }) { Text("Eliminar") }
             },
             dismissButton = {
@@ -116,19 +176,41 @@ fun ListaProductosScreen(
 }
 
 @Composable
+private fun ResumenCard(
+    titulo: String,
+    valor: Int,
+    containerColor: androidx.compose.ui.graphics.Color,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = containerColor)
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(titulo, style = MaterialTheme.typography.labelLarge)
+            Text(
+                valor.toString(),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Composable
 private fun ProductoItem(
     producto: ProductoEntity,
     onEditar: () -> Unit,
     onEliminar: () -> Unit
 ) {
-    val stockBajo = producto.cantidad <= producto.stockMinimo
+    val bajo = producto.stockBajo
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onEditar() },
         colors = CardDefaults.cardColors(
-            containerColor = if (stockBajo) MaterialTheme.colorScheme.tertiaryContainer
+            containerColor = if (bajo) MaterialTheme.colorScheme.tertiaryContainer
             else MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
@@ -145,7 +227,7 @@ private fun ProductoItem(
                 Text("Código: ${producto.codigo}")
                 Text("Categoría: ${producto.categoria}")
                 Text("Stock: ${producto.cantidad} (mínimo ${producto.stockMinimo})")
-                if (stockBajo) {
+                if (bajo) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             Icons.Default.Warning,

@@ -26,5 +26,8 @@ data class ProductoUiState(
 // Estado de la pantalla de lista
 data class ListaProductosUiState(
     val productos: List<ProductoEntity> = emptyList(),
-    val busqueda: String = ""
+    val busqueda: String = "",
+    val soloStockBajo: Boolean = false,
+    val total: Int = 0,
+    val stockBajo: Int = 0
 )
