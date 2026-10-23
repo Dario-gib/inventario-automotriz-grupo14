@@ -1,5 +1,7 @@
 package com.example.dsy1105_006d_lc7.ui.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -22,7 +24,35 @@ fun AppNavigation() {
     // Un solo ViewModel compartido entre la lista y el formulario
     val productoViewModel: ProductoViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = "login") {
+    // Transiciones: las pantallas entran deslizándose y vuelven en sentido contrario
+    NavHost(
+        navController = navController,
+        startDestination = "login",
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(350)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(350)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(350)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(350)
+            )
+        }
+    ) {
 
         composable("login") {
             LoginScreen(navController = navController)
