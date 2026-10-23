@@ -1,15 +1,24 @@
 package com.example.dsy1105_006d_lc7.ui.producto
 
 import android.app.Application
+import android.util.Patterns
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dsy1105_006d_lc7.data.local.AppDatabase
 import com.example.dsy1105_006d_lc7.data.local.ProductoEntity
+import com.example.dsy1105_006d_lc7.data.local.cantidadSugerida
 import com.example.dsy1105_006d_lc7.data.local.stockBajo
 import com.example.dsy1105_006d_lc7.data.repository.ProductoRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+
+// Borrador de correo para solicitar reposición a un proveedor (ficticio)
+data class BorradorCorreo(
+    val destinatario: String,
+    val asunto: String,
+    val cuerpo: String
+)
 
 class ProductoViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -183,5 +192,38 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
     // Deshacer una eliminación: vuelve a insertar el mismo producto
     fun restaurar(producto: ProductoEntity) {
         viewModelScope.launch { repository.insertar(producto) }
+    }
+
+    // ---------- Reposición (solicitud por correo) ----------
+    // Productos que están en el mínimo o bajo él, siempre actualizados desde Room
+    val productosStockBajo: StateFlow<List<ProductoEntity>> = repository.observarTodos()
+        .map { todos -> todos.filter { it.stockBajo } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // Arma el texto del correo con los productos y las cantidades sugeridas
+    fun generarBorrador(productos: List<ProductoEntity>): BorradorCorreo {
+        val detalle = productos.joinToString("\n") { p ->
+            "- ${p.nombre} (código ${p.codigo}): disponible ${p.cantidad}, " +
+                    "solicitar ${p.cantidadSugerida} unidades"
+        }
+        val cuerpo = "Estimado proveedor:\n\n" +
+                "Junto con saludar, solicitamos disponibilidad y cotización " +
+                "de los siguientes productos:\n\n" +
+                detalle +
+                "\n\nQuedamos atentos a su respuesta.\n\n" +
+                "Saludos cordiales,\nTaller PuenteAuto (datos ficticios)"
+        return BorradorCorreo(
+            destinatario = "proveedor.ficticio@example.com",
+            asunto = "Solicitud de cotización de reposición",
+            cuerpo = cuerpo
+        )
+    }
+
+    // La validación vive en el ViewModel, no en la pantalla
+    fun validarDestinatario(texto: String): String? {
+        val correo = texto.trim()
+        if (correo.isBlank()) return "El destinatario es obligatorio"
+        if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) return "Ingresa un correo válido"
+        return null
     }
 }
