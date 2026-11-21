@@ -30,6 +30,9 @@ import com.example.dsy1105_006d_lc7.ui.qr.QrViewModelFactory
 import com.example.dsy1105_006d_lc7.ui.reposicion.ReposicionScreen
 import com.example.dsy1105_006d_lc7.ui.reposicion.ReposicionViewModel
 import com.example.dsy1105_006d_lc7.ui.reposicion.ReposicionViewModelFactory
+import com.example.dsy1105_006d_lc7.ui.ubicacion.UbicacionViewModel
+import com.example.dsy1105_006d_lc7.ui.ubicacion.UbicacionViewModelFactory
+import com.example.dsy1105_006d_lc7.ui.ubicacion.UbicacionesScreen
 
 @Composable
 fun AppNavigation() {
@@ -115,6 +118,16 @@ fun AppNavigation() {
             ReposicionScreen(
                 viewModel = reposicionViewModel,
                 onVerProveedores = { navController.navigate("proveedores") },
+                onVolver = { navController.popBackStack() }
+            )
+        }
+
+        composable("ubicaciones") {
+            val ubicacionViewModel: UbicacionViewModel = viewModel(
+                factory = UbicacionViewModelFactory(context.applicationContext as Application)
+            )
+            UbicacionesScreen(
+                viewModel = ubicacionViewModel,
                 onVolver = { navController.popBackStack() }
             )
         }
