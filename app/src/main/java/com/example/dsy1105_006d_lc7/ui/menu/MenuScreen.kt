@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Inventory2
-import androidx.compose.material.icons.filled.LocalShipping
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -39,10 +39,10 @@ fun MenuScreen(
             )
 
             NavigationDrawerItem(
-                label = { Text("Proveedores") },
+                label = { Text("Reposición") },
                 selected = false,
-                onClick = { navController.navigate("proveedores") },
-                icon = { Icon(Icons.Default.LocalShipping, contentDescription = "Proveedores") }
+                onClick = { navController.navigate("reposicion") },
+                icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Reposición") }
             )
 
             NavigationDrawerItem(

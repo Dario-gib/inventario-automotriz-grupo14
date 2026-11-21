@@ -24,6 +24,9 @@ import com.example.dsy1105_006d_lc7.ui.qr.QrCapturaScreen
 import com.example.dsy1105_006d_lc7.ui.qr.QrScannerScreen
 import com.example.dsy1105_006d_lc7.ui.qr.QrViewModel
 import com.example.dsy1105_006d_lc7.ui.qr.QrViewModelFactory
+import com.example.dsy1105_006d_lc7.ui.reposicion.ReposicionScreen
+import com.example.dsy1105_006d_lc7.ui.reposicion.ReposicionViewModel
+import com.example.dsy1105_006d_lc7.ui.reposicion.ReposicionViewModelFactory
 
 @Composable
 fun AppNavigation() {
@@ -98,6 +101,17 @@ fun AppNavigation() {
             )
             ProveedoresScreen(
                 viewModel = proveedorViewModel,
+                onVolver = { navController.popBackStack() }
+            )
+        }
+
+        composable("reposicion") {
+            val reposicionViewModel: ReposicionViewModel = viewModel(
+                factory = ReposicionViewModelFactory(context.applicationContext as Application)
+            )
+            ReposicionScreen(
+                viewModel = reposicionViewModel,
+                onVerProveedores = { navController.navigate("proveedores") },
                 onVolver = { navController.popBackStack() }
             )
         }
