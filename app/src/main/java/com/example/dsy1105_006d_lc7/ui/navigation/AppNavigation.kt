@@ -13,6 +13,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.dsy1105_006d_lc7.ui.login.LoginScreen
 import com.example.dsy1105_006d_lc7.ui.menu.MenuScreen
+import com.example.dsy1105_006d_lc7.ui.movimiento.MovimientoViewModel
+import com.example.dsy1105_006d_lc7.ui.movimiento.MovimientoViewModelFactory
+import com.example.dsy1105_006d_lc7.ui.movimiento.MovimientosScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ListaProductosScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoFormScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoViewModel
@@ -112,6 +115,16 @@ fun AppNavigation() {
             ReposicionScreen(
                 viewModel = reposicionViewModel,
                 onVerProveedores = { navController.navigate("proveedores") },
+                onVolver = { navController.popBackStack() }
+            )
+        }
+
+        composable("movimientos") {
+            val movimientoViewModel: MovimientoViewModel = viewModel(
+                factory = MovimientoViewModelFactory(context.applicationContext as Application)
+            )
+            MovimientosScreen(
+                viewModel = movimientoViewModel,
                 onVolver = { navController.popBackStack() }
             )
         }
