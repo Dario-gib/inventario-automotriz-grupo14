@@ -1,9 +1,7 @@
 package com.example.dsy1105_006d_lc7.ui.qr
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dsy1105_006d_lc7.data.local.AppDatabase
 import com.example.dsy1105_006d_lc7.data.local.ProductoEntity
 import com.example.dsy1105_006d_lc7.data.repository.ProductoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,11 +15,9 @@ data class QrUiState(
     val buscando: Boolean = false
 )
 
-class QrViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = ProductoRepository(
-        AppDatabase.getDatabase(application).productoDao()
-    )
+class QrViewModel(
+    private val repository: ProductoRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(QrUiState())
     val uiState: StateFlow<QrUiState> = _uiState.asStateFlow()

@@ -1,8 +1,10 @@
 package com.example.dsy1105_006d_lc7.ui.navigation
 
+import android.app.Application
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,15 +16,20 @@ import com.example.dsy1105_006d_lc7.ui.menu.MenuScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ListaProductosScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoFormScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoViewModel
+import com.example.dsy1105_006d_lc7.ui.producto.ProductoViewModelFactory
 import com.example.dsy1105_006d_lc7.ui.qr.QrCapturaScreen
 import com.example.dsy1105_006d_lc7.ui.qr.QrScannerScreen
 import com.example.dsy1105_006d_lc7.ui.qr.QrViewModel
+import com.example.dsy1105_006d_lc7.ui.qr.QrViewModelFactory
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
     // Un solo ViewModel compartido entre la lista y el formulario
-    val productoViewModel: ProductoViewModel = viewModel()
+    val context = LocalContext.current
+    val productoViewModel: ProductoViewModel = viewModel(
+        factory = ProductoViewModelFactory(context.applicationContext as Application)
+    )
 
     // Transiciones: las pantallas entran deslizándose y vuelven en sentido contrario
     NavHost(
@@ -94,7 +101,9 @@ fun AppNavigation() {
         }
 
         composable("qr_scanner") {
-            val qrViewModel: QrViewModel = viewModel()
+            val qrViewModel: QrViewModel = viewModel(
+                factory = QrViewModelFactory(context.applicationContext as Application)
+            )
             QrScannerScreen(
                 viewModel = qrViewModel,
                 onVolver = { navController.popBackStack() },

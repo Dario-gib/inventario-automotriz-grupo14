@@ -1,10 +1,8 @@
 package com.example.dsy1105_006d_lc7.ui.producto
 
-import android.app.Application
-import android.util.Patterns
-import androidx.lifecycle.AndroidViewModel
+
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dsy1105_006d_lc7.data.local.AppDatabase
 import com.example.dsy1105_006d_lc7.data.local.ProductoEntity
 import com.example.dsy1105_006d_lc7.data.local.cantidadSugerida
 import com.example.dsy1105_006d_lc7.data.local.stockBajo
@@ -20,11 +18,9 @@ data class BorradorCorreo(
     val cuerpo: String
 )
 
-class ProductoViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = ProductoRepository(
-        AppDatabase.getDatabase(application).productoDao()
-    )
+class ProductoViewModel(
+    private val repository: ProductoRepository
+) : ViewModel() {
 
     // ---------- Formulario ----------
     private val _form = MutableStateFlow(ProductoUiState())
@@ -223,7 +219,10 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
     fun validarDestinatario(texto: String): String? {
         val correo = texto.trim()
         if (correo.isBlank()) return "El destinatario es obligatorio"
-        if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) return "Ingresa un correo válido"
+        if (!CORREO_REGEX.matches(correo)) return "Ingresa un correo válido"
         return null
+    }
+    companion object {
+        private val CORREO_REGEX = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
     }
 }
