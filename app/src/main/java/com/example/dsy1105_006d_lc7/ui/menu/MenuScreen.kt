@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Inventory2
+import androidx.compose.material.icons.filled.LocalShipping
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -35,6 +36,13 @@ fun MenuScreen(
                 selected = false,
                 onClick = { navController.navigate("lista_productos") },
                 icon = { Icon(Icons.Default.Inventory2, contentDescription = "Productos") }
+            )
+
+            NavigationDrawerItem(
+                label = { Text("Proveedores") },
+                selected = false,
+                onClick = { navController.navigate("proveedores") },
+                icon = { Icon(Icons.Default.LocalShipping, contentDescription = "Proveedores") }
             )
 
             NavigationDrawerItem(

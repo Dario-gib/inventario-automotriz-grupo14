@@ -17,6 +17,9 @@ import com.example.dsy1105_006d_lc7.ui.producto.ListaProductosScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoFormScreen
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoViewModel
 import com.example.dsy1105_006d_lc7.ui.producto.ProductoViewModelFactory
+import com.example.dsy1105_006d_lc7.ui.proveedor.ProveedorViewModel
+import com.example.dsy1105_006d_lc7.ui.proveedor.ProveedorViewModelFactory
+import com.example.dsy1105_006d_lc7.ui.proveedor.ProveedoresScreen
 import com.example.dsy1105_006d_lc7.ui.qr.QrCapturaScreen
 import com.example.dsy1105_006d_lc7.ui.qr.QrScannerScreen
 import com.example.dsy1105_006d_lc7.ui.qr.QrViewModel
@@ -85,6 +88,16 @@ fun AppNavigation() {
                     navController.navigate("producto_form/$id")
                 },
                 onEscanearQr = { navController.navigate("qr_scanner") },
+                onVolver = { navController.popBackStack() }
+            )
+        }
+
+        composable("proveedores") {
+            val proveedorViewModel: ProveedorViewModel = viewModel(
+                factory = ProveedorViewModelFactory(context.applicationContext as Application)
+            )
+            ProveedoresScreen(
+                viewModel = proveedorViewModel,
                 onVolver = { navController.popBackStack() }
             )
         }
