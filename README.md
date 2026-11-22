@@ -1,41 +1,30 @@
 # PuenteAuto – Inventario automotriz
 
-Aplicación móvil Android para gestionar el inventario de un taller mecánico automotriz (caso **Gestión móvil de inventario, ventas y reposición de productos automotrices**).
-Esta entrega corresponde a la **Evaluación Parcial 2** de **DSY1105 – Desarrollo de Aplicaciones Móviles** (sección 006D).
-
-> Todos los datos de la aplicación son **ficticios**. No se almacenan datos reales de clientes ni de proveedores.
+App móvil de inventario, ventas y reposición de productos automotrices.
+Asignatura  · Seccion 006D · MVP académico (todos los datos son ficticios).
 
 ## Integrantes
 
 | Nombre |
-|---|---|
 | Dario Corona| 
 | Sebastian Painemilla |
 | D Einstein Sanon |
 
-- Equipo: **Grupo 14**
+- Equipo: Grupo 14
 - Docente: Vicente Zapata
 
 ## Funcionalidades implementadas
 
-**Acceso**
-- Inicio de sesión con una cuenta ficticia, con validación y mensaje de error.
-- Menú principal con navegación hacia Productos y cierre de sesión.
-
-**Productos (CRUD con Room)**
-- Registrar y modificar productos con: código, nombre, categoría, cantidad y stock mínimo.
-- Validaciones por campo con mensaje, ícono de error y animación: campos obligatorios, números enteros mayores o iguales a 0 y código único.
-- Eliminar con confirmación y opción **Deshacer**.
-- Los datos se conservan al cerrar y reabrir la app (persistencia local con Room).
-
-**Consulta**
-- Resumen con el total de productos y los que tienen stock bajo.
-- Búsqueda por nombre o código, filtro por categoría y filtro "Solo stock bajo".
-- Indicador visual de stock bajo (color, ícono y texto, sin depender solo del color).
+- **Inicio de sesión** con usuario ficticio (`admin` / `123`).
+- **Productos e inventario:** registrar, editar, eliminar y buscar; validaciones; filtros por stock bajo y categoría; lectura de códigos QR con la cámara.
+- **Movimientos:** ingreso, venta, consumo, ajuste y devolución, con la regla de stock suficiente e historial.
+- **Ubicación en bodega:** zona, estante y repisa por producto, con búsqueda.
+- **Reposición:** productos bajo el mínimo, agrupados por proveedor, con borrador de correo (no se envía automáticamente).
+- **API REST de proveedores:** consulta con Retrofit y copia local en Room (funciona sin conexión).
 
 **Recursos nativos del dispositivo**
-1. **Cámara (CameraX + ML Kit):** lectura de códigos QR. Se puede escanear desde la lista para buscar un producto (si no existe, ofrece registrarlo con el código cargado) y desde el formulario para completar el campo código. Solicita el permiso de cámara en tiempo de ejecución y informa si se rechaza.
-2. **Cliente de correo:** desde la lista, el botón de correo prepara un borrador de **solicitud de reposición** con los productos bajo el mínimo y la cantidad sugerida. El usuario puede revisar y modificar destinatario, asunto y mensaje antes de abrir su app de correo. La app **no envía nada automáticamente**, no pide permisos y no guarda credenciales.
+1. Cámara (CameraX + ML Kit):** lectura de códigos QR. Se puede escanear desde la lista para buscar un producto (si no existe, ofrece registrarlo con el código cargado) y desde el formulario para completar el campo código. Solicita el permiso de cámara en tiempo de ejecución y informa si se rechaza.
+2. Cliente de correo desde la lista, el botón de correo prepara un borrador de **solicitud de reposición** con los productos bajo el mínimo y la cantidad sugerida. El usuario puede revisar y modificar destinatario, asunto y mensaje antes de abrir su app de correo. La app **no envía nada automáticamente**, no pide permisos y no guarda credenciales.
 
 **Animaciones**
 - Transiciones deslizantes entre pantallas.
