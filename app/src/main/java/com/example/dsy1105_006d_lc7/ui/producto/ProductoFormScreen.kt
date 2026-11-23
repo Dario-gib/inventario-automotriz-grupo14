@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Inventory2
+import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Warning
@@ -79,6 +80,12 @@ fun ProductoFormScreen(
                 "Nombre", state.nombre, viewModel::onNombreChange, state.nombreError,
                 iconoInicial = Icons.Default.Edit
             )
+
+            CampoTexto(
+                "Marca", state.marca, viewModel::onMarcaChange, null,
+                iconoInicial = Icons.Default.LocalOffer
+            )
+
             CampoTexto(
                 "Categoría", state.categoria, viewModel::onCategoriaChange, state.categoriaError,
                 iconoInicial = Icons.Default.Category

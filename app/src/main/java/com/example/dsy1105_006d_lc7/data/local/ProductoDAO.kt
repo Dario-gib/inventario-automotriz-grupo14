@@ -25,10 +25,10 @@ interface ProductoDao {
     @Query(
         "SELECT * FROM productos " +
                 "WHERE nombre LIKE '%' || :texto || '%' OR codigo LIKE '%' || :texto || '%' " +
+                "OR marca LIKE '%' || :texto || '%' " +
                 "ORDER BY nombre ASC"
     )
     fun buscar(texto: String): Flow<List<ProductoEntity>>
-
     @Query("SELECT * FROM productos WHERE id = :id")
     suspend fun obtenerPorId(id: Int): ProductoEntity?
 

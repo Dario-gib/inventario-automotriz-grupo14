@@ -228,4 +228,43 @@ class ProductoViewModelTest : StringSpec({
         borrador.cuerpo shouldContain "Pastillas de freno"
         borrador.cuerpo shouldContain "solicitar 8 unidades"
     }
+
+    "la marca se guarda junto con el producto" {
+        runTest(dispatcher) {
+            val repo = repoSimulado()
+            val vm = ProductoViewModel(repo)
+            llenarFormularioValido(vm)
+            vm.onMarcaChange("  Bosch ")
+
+            vm.guardar()
+
+            coVerify(exactly = 1) { repo.insertar(match { it.marca == "Bosch" }) }
+        }
+    }
+
+    "la marca es opcional" {
+        runTest(dispatcher) {
+            val repo = repoSimulado()
+            val vm = ProductoViewModel(repo)
+            llenarFormularioValido(vm)
+
+            vm.guardar()
+
+            coVerify(exactly = 1) { repo.insertar(match { it.marca == "" }) }
+            vm.form.value.guardadoExitosamente shouldBe true
+        }
+    }
+
+    "al editar se carga la marca del producto" {
+        runTest(dispatcher) {
+            val repo = repoSimulado()
+            coEvery { repo.obtenerPorId(5) } returns producto(id = 5).copy(marca = "NGK")
+            val vm = ProductoViewModel(repo)
+
+            vm.cargarProducto(5)
+
+            vm.form.value.marca shouldBe "NGK"
+        }
+    }
+
 })

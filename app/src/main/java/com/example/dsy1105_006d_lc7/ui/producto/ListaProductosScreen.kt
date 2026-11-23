@@ -294,6 +294,7 @@ private fun ProductoItem(
                     fontWeight = FontWeight.Bold
                 )
                 Text("Código: ${producto.codigo}")
+                if (producto.marca.isNotBlank()) Text("Marca: ${producto.marca}")
                 Text("Categoría: ${producto.categoria}")
                 Text("Stock: ${producto.cantidad} (mínimo ${producto.stockMinimo})")
                 if (bajo) {

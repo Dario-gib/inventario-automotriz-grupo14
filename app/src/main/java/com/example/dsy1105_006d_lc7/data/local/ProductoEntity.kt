@@ -14,5 +14,6 @@ data class ProductoEntity(
     val nombre: String,
     val categoria: String,
     val cantidad: Int,
-    val stockMinimo: Int
+    val stockMinimo: Int,
+    val marca: String = ""
 )

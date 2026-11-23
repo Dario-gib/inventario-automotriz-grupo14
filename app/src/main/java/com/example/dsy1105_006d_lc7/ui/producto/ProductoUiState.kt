@@ -8,6 +8,7 @@ data class ProductoUiState(
     val codigo: String = "",
     val nombre: String = "",
     val categoria: String = "",
+    val marca: String = "",
     val cantidad: String = "",
     val stockMinimo: String = "",
 

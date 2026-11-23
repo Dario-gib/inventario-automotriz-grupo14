@@ -88,6 +88,8 @@ class ProductoViewModel(
         _categoria.value = categoria
     }
 
+    fun onMarcaChange(v: String) = _form.update { it.copy(marca = v) }
+
     // ---------- Cambios de campos (limpian su error) ----------
     fun onCodigoChange(v: String) = _form.update { it.copy(codigo = v, codigoError = null) }
     fun onNombreChange(v: String) = _form.update { it.copy(nombre = v, nombreError = null) }
@@ -108,6 +110,7 @@ class ProductoViewModel(
                 codigo = p.codigo,
                 nombre = p.nombre,
                 categoria = p.categoria,
+                marca = p.marca,
                 cantidad = p.cantidad.toString(),
                 stockMinimo = p.stockMinimo.toString()
             )
@@ -166,6 +169,7 @@ class ProductoViewModel(
                 codigo = s.codigo.trim(),
                 nombre = s.nombre.trim(),
                 categoria = s.categoria.trim(),
+                marca = s.marca.trim(),
                 cantidad = s.cantidad.trim().toInt(),
                 stockMinimo = s.stockMinimo.trim().toInt()
             )
