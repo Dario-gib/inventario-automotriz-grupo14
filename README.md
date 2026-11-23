@@ -19,6 +19,7 @@ Asignatura  · Seccion 006D · MVP académico (todos los datos son ficticios).
 - **Productos e inventario:** registrar, editar, eliminar y buscar; validaciones; filtros por stock bajo y categoría; lectura de códigos QR con la cámara.
 - **Movimientos:** ingreso, venta, consumo, ajuste y devolución, con la regla de stock suficiente e historial.
 - **Ubicación en bodega:** zona, estante y repisa por producto, con búsqueda.
+- **Marca de Productos y Ubicación en lista**: Asignar marca a los productos y mostrar ubicacion en la lista
 - **Reposición:** productos bajo el mínimo, agrupados por proveedor, con borrador de correo (no se envía automáticamente).
 - **API REST de proveedores:** consulta con Retrofit y copia local en Room (funciona sin conexión).
 

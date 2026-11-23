@@ -27,8 +27,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.icons.filled.LocationOn
 import com.example.dsy1105_006d_lc7.data.local.ProductoEntity
+import com.example.dsy1105_006d_lc7.data.local.UbicacionEntity
 import com.example.dsy1105_006d_lc7.data.local.stockBajo
+import com.example.dsy1105_006d_lc7.data.repository.texto
 import com.example.dsy1105_006d_lc7.ui.theme.appTopBarColors
 import com.example.dsy1105_006d_lc7.utils.CorreoHelper
 import kotlinx.coroutines.launch
@@ -47,6 +50,7 @@ fun ListaProductosScreen(
     val productosBajos by viewModel.productosStockBajo.collectAsState()
     var productoAEliminar by remember { mutableStateOf<ProductoEntity?>(null) }
     var mostrarSolicitud by remember { mutableStateOf(false) }
+    val ubicaciones by viewModel.ubicaciones.collectAsState()
     val context = LocalContext.current
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -180,6 +184,7 @@ fun ListaProductosScreen(
                         ProductoItem(
                             modifier = Modifier.animateItem(),
                             producto = producto,
+                            ubicacion = ubicaciones[producto.id],
                             onEditar = { onEditar(producto.id) },
                             onEliminar = { productoAEliminar = producto }
                         )
@@ -266,6 +271,7 @@ private fun ProductoItem(
     producto: ProductoEntity,
     onEditar: () -> Unit,
     onEliminar: () -> Unit,
+    ubicacion: UbicacionEntity? = null,
     modifier: Modifier = Modifier
 ) {
     val bajo = producto.stockBajo
@@ -311,6 +317,17 @@ private fun ProductoItem(
                             color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold
                         )
+                    }
+                }
+                if (ubicacion != null) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.LocationOn,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(ubicacion.texto)
                     }
                 }
             }

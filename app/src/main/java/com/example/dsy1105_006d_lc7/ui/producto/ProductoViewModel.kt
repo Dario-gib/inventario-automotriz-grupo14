@@ -4,6 +4,7 @@ package com.example.dsy1105_006d_lc7.ui.producto
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dsy1105_006d_lc7.data.local.ProductoEntity
+import com.example.dsy1105_006d_lc7.data.local.UbicacionEntity
 import com.example.dsy1105_006d_lc7.data.local.cantidadSugerida
 import com.example.dsy1105_006d_lc7.data.local.stockBajo
 import com.example.dsy1105_006d_lc7.data.repository.ProductoRepository
@@ -19,7 +20,8 @@ data class BorradorCorreo(
 )
 
 class ProductoViewModel(
-    private val repository: ProductoRepository
+    private val repository: ProductoRepository,
+    ubicacionesFlow: Flow<List<UbicacionEntity>> = flowOf(emptyList())
 ) : ViewModel() {
 
     // ---------- Formulario ----------
@@ -199,6 +201,11 @@ class ProductoViewModel(
     val productosStockBajo: StateFlow<List<ProductoEntity>> = repository.observarTodos()
         .map { todos -> todos.filter { it.stockBajo } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // Ubicación de cada producto (por id) para mostrarla en la lista
+    val ubicaciones: StateFlow<Map<Int, UbicacionEntity>> = ubicacionesFlow
+        .map { lista -> lista.associateBy { it.productoId } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
     // Arma el texto del correo con los productos y las cantidades sugeridas
     fun generarBorrador(productos: List<ProductoEntity>): BorradorCorreo {

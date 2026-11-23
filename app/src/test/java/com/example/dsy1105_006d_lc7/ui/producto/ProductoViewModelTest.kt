@@ -1,6 +1,7 @@
 package com.example.dsy1105_006d_lc7.ui.producto
 
 import com.example.dsy1105_006d_lc7.data.local.ProductoEntity
+import com.example.dsy1105_006d_lc7.data.local.UbicacionEntity
 import com.example.dsy1105_006d_lc7.data.repository.ProductoRepository
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
@@ -264,6 +265,27 @@ class ProductoViewModelTest : StringSpec({
             vm.cargarProducto(5)
 
             vm.form.value.marca shouldBe "NGK"
+        }
+    }
+
+    "las ubicaciones se indexan por el id del producto" {
+        runTest(dispatcher) {
+            val ub1 = UbicacionEntity(productoId = 1, zona = "A", estante = "3", repisa = "2")
+            val ub2 = UbicacionEntity(productoId = 2, zona = "B", estante = "1", repisa = "4")
+            val vm = ProductoViewModel(repoSimulado(), flowOf(listOf(ub1, ub2)))
+            backgroundScope.launch(dispatcher) { vm.ubicaciones.collect { } }
+
+            vm.ubicaciones.value[1] shouldBe ub1
+            vm.ubicaciones.value[2] shouldBe ub2
+        }
+    }
+
+    "un producto sin ubicación no aparece en el mapa" {
+        runTest(dispatcher) {
+            val vm = ProductoViewModel(repoSimulado(), flowOf(emptyList()))
+            backgroundScope.launch(dispatcher) { vm.ubicaciones.collect { } }
+
+            vm.ubicaciones.value[99] shouldBe null
         }
     }
 

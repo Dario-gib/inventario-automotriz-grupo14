@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.example.dsy1105_006d_lc7.data.local.ProductoEntity
+import com.example.dsy1105_006d_lc7.data.local.UbicacionEntity
 import com.example.dsy1105_006d_lc7.data.repository.ProductoRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -106,4 +107,28 @@ class ListaProductosScreenTest {
 
         composeRule.onNodeWithText("Aún no hay productos", substring = true).assertIsDisplayed()
     }
+
+    @Test
+    fun muestra_la_marca_y_la_ubicacion_del_producto() {
+        val conMarca = pastillas.copy(marca = "Brembo")
+        val repo = mockk<ProductoRepository>()
+        every { repo.observarTodos() } returns flowOf(listOf(conMarca))
+        every { repo.buscar(any()) } returns flowOf(listOf(conMarca))
+        val ubicacion = UbicacionEntity(productoId = 1, zona = "A", estante = "3", repisa = "2")
+        val vm = ProductoViewModel(repo, flowOf(listOf(ubicacion)))
+        composeRule.setContent {
+            ListaProductosScreen(
+                viewModel = vm,
+                onAgregar = {},
+                onEditar = {},
+                onEscanearQr = {},
+                onVolver = {}
+            )
+        }
+        esperarTexto("Pastillas de freno")
+
+        composeRule.onNodeWithText("Marca: Brembo").assertIsDisplayed()
+        composeRule.onNodeWithText("Zona A · Estante 3 · Repisa 2").assertIsDisplayed()
+    }
+
 }
